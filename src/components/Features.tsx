@@ -27,33 +27,33 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-rosegold-25">
+    <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-white to-rosegold-25">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-slide-up">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        <div className="text-center mb-12 sm:mb-16 animate-slide-up">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             왜 <span className="text-gradient">마침</span>인가요?
           </h2>
-          <p className="text-xl text-bluegray-600 max-w-2xl mx-auto">
-            가벼운 소개팅 앱도, 부담스러운 결혼정보회사도 아닌<br />
+          <p className="text-lg sm:text-xl text-bluegray-600 max-w-2xl mx-auto px-4">
+            가벼운 소개팅 앱도, 부담스러운 결혼정보회사도 아닌<br className="hidden sm:block" />
             딱 맞는 중간 지점의 신뢰할 수 있는 매칭 서비스
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <Card 
               key={index} 
               className="border-rosegold-100 hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 rounded-full gradient-rosegold flex items-center justify-center mx-auto mb-6">
-                  <feature.icon className="w-8 h-8 text-white" />
+              <CardContent className="p-6 sm:p-8 text-center">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full gradient-rosegold flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                  <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-4 text-bluegray-800">
+                <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-bluegray-800">
                   {feature.title}
                 </h3>
-                <p className="text-bluegray-600 leading-relaxed">
+                <p className="text-sm sm:text-base text-bluegray-600 leading-relaxed">
                   {feature.description}
                 </p>
               </CardContent>

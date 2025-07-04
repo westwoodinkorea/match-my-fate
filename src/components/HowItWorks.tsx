@@ -36,33 +36,33 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-16 sm:py-20 lg:py-24 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-slide-up">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        <div className="text-center mb-12 sm:mb-16 animate-slide-up">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             <span className="text-gradient">마침</span> 이용방법
           </h2>
-          <p className="text-xl text-bluegray-600 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-bluegray-600 max-w-2xl mx-auto px-4">
             6단계의 간단한 과정으로 운명의 상대를 만나보세요
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {steps.map((step, index) => (
             <Card 
               key={index}
               className="relative border-rosegold-100 hover:shadow-elegant transition-all duration-300 animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardContent className="p-8">
-                <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full gradient-rosegold flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">{step.number}</span>
+              <CardContent className="p-6 sm:p-8">
+                <div className="absolute -top-3 -left-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full gradient-rosegold flex items-center justify-center">
+                  <span className="text-white font-bold text-sm sm:text-lg">{step.number}</span>
                 </div>
                 <div className="mt-4">
-                  <h3 className="text-xl font-bold mb-4 text-bluegray-800">
+                  <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-bluegray-800">
                     {step.title}
                   </h3>
-                  <p className="text-bluegray-600 leading-relaxed">
+                  <p className="text-sm sm:text-base text-bluegray-600 leading-relaxed">
                     {step.description}
                   </p>
                 </div>
