@@ -31,14 +31,11 @@ const Header = () => {
         
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/about" className="text-bluegray-700 hover:text-rosegold-600 transition-colors">
-            서비스 소개
+          <Link to="/application" className="text-bluegray-700 hover:text-rosegold-600 transition-colors">
+            서비스 신청
           </Link>
-          <Link to="/how-it-works" className="text-bluegray-700 hover:text-rosegold-600 transition-colors">
-            이용 방법
-          </Link>
-          <Link to="/pricing" className="text-bluegray-700 hover:text-rosegold-600 transition-colors">
-            요금제
+          <Link to="/matching" className="text-bluegray-700 hover:text-rosegold-600 transition-colors">
+            매칭 확인
           </Link>
         </nav>
         
@@ -62,25 +59,18 @@ const Header = () => {
         <div className="md:hidden glass-effect border-t border-rosegold-100">
           <nav className="container mx-auto px-4 py-4 space-y-4">
             <Link 
-              to="/about" 
+              to="/application" 
               className="block py-2 text-bluegray-700 hover:text-rosegold-600 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              서비스 소개
+              서비스 신청
             </Link>
             <Link 
-              to="/how-it-works" 
+              to="/matching" 
               className="block py-2 text-bluegray-700 hover:text-rosegold-600 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              이용 방법
-            </Link>
-            <Link 
-              to="/pricing" 
-              className="block py-2 text-bluegray-700 hover:text-rosegold-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              요금제
+              매칭 확인
             </Link>
             <div className="flex flex-col space-y-3 pt-4 border-t border-rosegold-100">
               <Link to="/login" onClick={() => setIsMenuOpen(false)}>
