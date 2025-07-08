@@ -53,18 +53,18 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// 마침 앱을 위한 커스텀 컬러
+				// 더 밝은 로즈골드 색상으로 업데이트
 				rosegold: {
-					50: '#fdf8f6',
-					100: '#f2e8e1',
-					200: '#eac2b2',
-					300: '#d39c82',
-					400: '#bc7653',
-					500: '#a55a36',
-					600: '#8b4a2d',
-					700: '#703c26',
-					800: '#592f20',
-					900: '#46261b',
+					50: '#fefcfb',
+					100: '#fef8f6',
+					200: '#fef0eb',
+					300: '#fde4d9',
+					400: '#fcd2c1',
+					500: '#fab8a0',
+					600: '#f39d7a',
+					700: '#ea7c4f',
+					800: '#de6332',
+					900: '#c85127',
 				},
 				bluegray: {
 					50: '#f8fafc',
