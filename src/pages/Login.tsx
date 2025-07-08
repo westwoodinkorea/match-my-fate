@@ -4,15 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     console.log("Login attempt:", { email, password });
+    
+    // 간단한 로그인 시뮬레이션 (실제로는 백엔드 API 호출)
+    setTimeout(() => {
+      setIsLoading(false);
+      // 로그인 성공 시 프로필 등록 화면으로 이동
+      navigate("/application");
+    }, 1000);
   };
 
   return (
@@ -64,8 +75,9 @@ const Login = () => {
             <Button 
               type="submit" 
               className="w-full bg-rosegold-500 hover:bg-rosegold-600 text-white py-3"
+              disabled={isLoading}
             >
-              로그인
+              {isLoading ? "로그인 중..." : "로그인"}
             </Button>
           </form>
           
