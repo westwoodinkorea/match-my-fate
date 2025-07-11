@@ -1,17 +1,16 @@
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { User, Session } from "@supabase/supabase-js";
 import Header from "@/components/Header";
 import BasicInfoSection from "@/components/forms/BasicInfoSection";
 import BackgroundInfoSection from "@/components/forms/BackgroundInfoSection";
 import LifestyleSection from "@/components/forms/LifestyleSection";
 import IdealTypeSection from "@/components/forms/IdealTypeSection";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { User, Session } from "@supabase/supabase-js";
+import ApplicationHeader from "@/components/ApplicationHeader";
+import ApplicationActions from "@/components/ApplicationActions";
+import { useApplicationForm } from "@/hooks/useApplicationForm";
+import { useApplicationState } from "@/hooks/useApplicationState";
 
 interface ApplicationProps {
   user: User | null;
@@ -19,237 +18,19 @@ interface ApplicationProps {
 }
 
 const Application = ({ user, session }: ApplicationProps) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    // 기본 정보
-    name: "",
-    gender: "",
-    birthDate: undefined as Date | undefined,
-    residence: "",
-    hometown: "",
-    contact: "",
-    
-    // 배경 정보
-    occupation: "",
-    company: "",
-    education: "",
-    school: "",
-    height: "",
-    mbti: "",
-    
-    // 생활 습관 및 가치관
-    smoking: "",
-    drinking: "",
-    religion: "",
-    maritalStatus: "",
-    hobbies: "",
-    
-    // 이상형 조건
-    idealAgeMin: "",
-    idealAgeMax: "",
-    personalityKeywords: [] as string[],
-    idealReligion: "",
-    preferredConditions: "",
-    avoidConditions: "",
-    allowedMaritalStatus: "",
-    appearanceConditions: "",
-    occupationConditions: "",
-    idealMbti: ""
-  });
+  const { formData, handleInputChange, handlePersonalityKeywordChange, setFormDataFromApplication } = useApplicationForm();
+  const { isLoading, existingApplication, isEditMode, submitApplication } = useApplicationState(user);
 
-  const [existingApplication, setExistingApplication] = useState<any>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-
-  // 사용자 인증 확인 및 기존 데이터 로드
+  // 기존 신청서 데이터로 폼 설정
   useEffect(() => {
-    const loadUserData = async () => {
-      if (!user) {
-        toast({
-          variant: "destructive",
-          title: "로그인 필요",
-          description: "신청서 작성을 위해 로그인이 필요합니다."
-        });
-        navigate("/login");
-        return;
-      }
-      
-      // 기존 신청서 데이터 로드
-      const { data: existing } = await supabase
-        .from('applications')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (existing) {
-        setExistingApplication(existing);
-        
-        // 이미 제출된 신청서가 있다면 (status가 'submitted'인 경우)
-        if (existing.status === 'submitted') {
-          // 매칭 페이지로 리디렉트하거나 편집 모드 제안
-          toast({
-            title: "신청서가 이미 제출되었습니다",
-            description: "이미 제출된 신청서가 있습니다. 정보를 수정하시겠습니까?",
-          });
-          setIsEditMode(true);
-        }
-        
-        // 폼 데이터 설정 (introduction에서 선호/비선호 조건 분리)
-        const introduction = existing.introduction || "";
-        const [preferredPart, avoidPart] = introduction.split("\n\n피하고 싶은 조건: ");
-        
-        setFormData({
-          name: existing.name || "",
-          gender: existing.gender || "",
-          birthDate: existing.age ? new Date(new Date().getFullYear() - existing.age, 0, 1) : undefined,
-          residence: existing.location || "",
-          hometown: existing.location || "",
-          contact: user.email || "",
-          occupation: existing.occupation || "",
-          company: "",
-          education: existing.education || "",
-          school: "",
-          height: "",
-          mbti: "",
-          smoking: existing.lifestyle_smoking || "",
-          drinking: existing.lifestyle_drinking || "",
-          religion: existing.religion || "",
-          maritalStatus: "",
-          hobbies: existing.hobbies?.join(", ") || "",
-          idealAgeMin: existing.ideal_age_min?.toString() || "",
-          idealAgeMax: existing.ideal_age_max?.toString() || "",
-          personalityKeywords: existing.personality ? existing.personality.split(", ") : [],
-          idealReligion: existing.religion || "",
-          preferredConditions: preferredPart || "",
-          avoidConditions: avoidPart || "",
-          allowedMaritalStatus: "",
-          appearanceConditions: "",
-          occupationConditions: existing.ideal_occupation || "",
-          idealMbti: ""
-        });
-      }
-    };
-    
-    loadUserData();
-  }, [user, navigate, toast]);
+    if (existingApplication && user) {
+      setFormDataFromApplication(existingApplication, user.email || "");
+    }
+  }, [existingApplication, user, setFormDataFromApplication]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) {
-      toast({
-        variant: "destructive",
-        title: "오류",
-        description: "로그인이 필요합니다."
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    try {
-      // 나이 계산 (생년월일 기준)
-      const age = formData.birthDate 
-        ? new Date().getFullYear() - formData.birthDate.getFullYear()
-        : null;
-      
-      // 취미를 배열로 변환
-      const hobbiesArray = formData.hobbies 
-        ? formData.hobbies.split(",").map(hobby => hobby.trim()).filter(hobby => hobby)
-        : [];
-      
-      // 신청서 데이터 구성
-      const applicationData = {
-        user_id: user.id,
-        name: formData.name,
-        age: age,
-        gender: formData.gender,
-        location: formData.residence,
-        occupation: formData.occupation,
-        education: formData.education,
-        family_background: "",
-        religion: formData.religion,
-        personality: formData.personalityKeywords.join(", "),
-        hobbies: hobbiesArray,
-        ideal_age_min: formData.idealAgeMin ? parseInt(formData.idealAgeMin) : null,
-        ideal_age_max: formData.idealAgeMax ? parseInt(formData.idealAgeMax) : null,
-        ideal_gender: formData.gender === "male" ? "female" : "male", // 반대 성별로 설정
-        ideal_location: formData.residence,
-        ideal_occupation: formData.occupationConditions,
-        ideal_education: formData.education,
-        ideal_personality: formData.personalityKeywords.join(", "),
-        lifestyle_smoking: formData.smoking,
-        lifestyle_drinking: formData.drinking,
-        lifestyle_exercise: "",
-        lifestyle_travel: "",
-        lifestyle_pets: "",
-        introduction: `${formData.preferredConditions}\n\n피하고 싶은 조건: ${formData.avoidConditions}`,
-        status: 'submitted'
-      };
-      
-      // 기존 신청서가 있는지 확인
-      const { data: existingApplication } = await supabase
-        .from('applications')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      let error;
-      
-      if (existingApplication) {
-        // 업데이트
-        const { error: updateError } = await supabase
-          .from('applications')
-          .update(applicationData)
-          .eq('user_id', user.id);
-        error = updateError;
-      } else {
-        // 새로 생성
-        const { error: insertError } = await supabase
-          .from('applications')
-          .insert([applicationData]);
-        error = insertError;
-      }
-      
-      if (error) {
-        throw error;
-      }
-      
-      toast({
-        title: isEditMode ? "정보 수정 완료" : "신청 완료",
-        description: isEditMode 
-          ? "정보가 성공적으로 수정되었습니다!" 
-          : "신청서가 성공적으로 제출되었습니다! 관리자가 검토 후 매칭을 제안해드릴 예정입니다."
-      });
-      
-      // 매칭 페이지로 이동 (기존 신청서가 있던 경우도 포함)
-      navigate("/matching");
-      
-    } catch (error) {
-      console.error("Application submission error:", error);
-      toast({
-        variant: "destructive",
-        title: "오류",
-        description: "신청서 제출 중 오류가 발생했습니다. 다시 시도해주세요."
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInputChange = (field: string, value: string | Date | undefined) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handlePersonalityKeywordChange = (keyword: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      personalityKeywords: checked 
-        ? [...prev.personalityKeywords, keyword]
-        : prev.personalityKeywords.filter(k => k !== keyword)
-    }));
+    await submitApplication(formData);
   };
 
   return (
@@ -258,23 +39,7 @@ const Application = ({ user, session }: ApplicationProps) => {
       <div className="pt-20 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <Card className="shadow-elegant">
-            <CardHeader className="text-center">
-              <div className="flex items-center justify-center space-x-2 mb-4">
-                <div className="w-10 h-10 rounded-full gradient-rosegold flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-3xl font-bold text-gradient">마침</span>
-              </div>
-              <CardTitle className="text-2xl text-bluegray-800">
-                {isEditMode ? "내 정보 수정" : "소개팅 신청서"}
-              </CardTitle>
-              <p className="text-bluegray-600">
-                {isEditMode 
-                  ? "정보를 수정하고 업데이트하세요" 
-                  : "정확한 매칭을 위해 상세한 정보를 입력해주세요"
-                }
-              </p>
-            </CardHeader>
+            <ApplicationHeader isEditMode={isEditMode} />
             
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-8">
@@ -330,30 +95,7 @@ const Application = ({ user, session }: ApplicationProps) => {
                   onPersonalityKeywordChange={handlePersonalityKeywordChange}
                 />
                 
-                <div className="space-y-4">
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading}
-                    className="w-full bg-rosegold-500 hover:bg-rosegold-600 text-white py-3 text-lg disabled:opacity-50"
-                  >
-                    {isLoading 
-                      ? (isEditMode ? "수정 중..." : "제출 중...") 
-                      : (isEditMode ? "정보 수정하기" : "신청서 제출하기")
-                    }
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                  
-                  {isEditMode && (
-                    <Button 
-                      type="button"
-                      variant="outline"
-                      onClick={() => navigate("/matching")}
-                      className="w-full border-rosegold-300 text-rosegold-700 hover:bg-rosegold-50"
-                    >
-                      매칭 페이지로 돌아가기
-                    </Button>
-                  )}
-                </div>
+                <ApplicationActions isLoading={isLoading} isEditMode={isEditMode} />
               </form>
             </CardContent>
           </Card>
