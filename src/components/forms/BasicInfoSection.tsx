@@ -154,7 +154,7 @@ const BasicInfoSection = ({ formData, onInputChange }: BasicInfoSectionProps) =>
         
         <div>
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
-            연락처 *
+            연락처 (010-0000-0000 형태로 입력) *
           </label>
           <Input
             placeholder="010-0000-0000"
