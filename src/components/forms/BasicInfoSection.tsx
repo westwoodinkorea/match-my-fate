@@ -1,12 +1,6 @@
 
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 
 interface BasicInfoSectionProps {
   formData: {
@@ -62,30 +56,73 @@ const BasicInfoSection = ({ formData, onInputChange }: BasicInfoSectionProps) =>
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
             생년월일 *
           </label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal border-rosegold-200 focus:border-rosegold-400",
-                  !formData.birthDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData.birthDate ? format(formData.birthDate, "PPP") : "생년월일을 선택하세요"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={formData.birthDate}
-                onSelect={(date) => onInputChange("birthDate", date)}
-                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
-            </PopoverContent>
-          </Popover>
+          <div className="grid grid-cols-3 gap-2">
+            <Select 
+              value={formData.birthDate?.getFullYear()?.toString()}
+              onValueChange={(value) => {
+                const year = parseInt(value);
+                const month = formData.birthDate?.getMonth() || 0;
+                const day = formData.birthDate?.getDate() || 1;
+                onInputChange("birthDate", new Date(year, month, day));
+              }}
+            >
+              <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
+                <SelectValue placeholder="연도" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 64 }, (_, i) => {
+                  const year = new Date().getFullYear() - i - 18;
+                  return (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}년
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+            
+            <Select 
+              value={formData.birthDate?.getMonth()?.toString()}
+              onValueChange={(value) => {
+                const year = formData.birthDate?.getFullYear() || new Date().getFullYear() - 25;
+                const month = parseInt(value);
+                const day = formData.birthDate?.getDate() || 1;
+                onInputChange("birthDate", new Date(year, month, day));
+              }}
+            >
+              <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
+                <SelectValue placeholder="월" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <SelectItem key={i} value={i.toString()}>
+                    {i + 1}월
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select 
+              value={formData.birthDate?.getDate()?.toString()}
+              onValueChange={(value) => {
+                const year = formData.birthDate?.getFullYear() || new Date().getFullYear() - 25;
+                const month = formData.birthDate?.getMonth() || 0;
+                const day = parseInt(value);
+                onInputChange("birthDate", new Date(year, month, day));
+              }}
+            >
+              <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
+                <SelectValue placeholder="일" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 31 }, (_, i) => (
+                  <SelectItem key={i + 1} value={(i + 1).toString()}>
+                    {i + 1}일
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         
         <div>
