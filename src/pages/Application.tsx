@@ -60,6 +60,9 @@ const Application = ({ user, session }: ApplicationProps) => {
     idealMbti: ""
   });
 
+  const [existingApplication, setExistingApplication] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
   // 사용자 인증 확인 및 기존 데이터 로드
   useEffect(() => {
     const loadUserData = async () => {
@@ -74,40 +77,56 @@ const Application = ({ user, session }: ApplicationProps) => {
       }
       
       // 기존 신청서 데이터 로드
-      const { data: existingApplication } = await supabase
+      const { data: existing } = await supabase
         .from('applications')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
       
-      if (existingApplication) {
+      if (existing) {
+        setExistingApplication(existing);
+        
+        // 이미 제출된 신청서가 있다면 (status가 'submitted'인 경우)
+        if (existing.status === 'submitted') {
+          // 매칭 페이지로 리디렉트하거나 편집 모드 제안
+          toast({
+            title: "신청서가 이미 제출되었습니다",
+            description: "이미 제출된 신청서가 있습니다. 정보를 수정하시겠습니까?",
+          });
+          setIsEditMode(true);
+        }
+        
+        // 폼 데이터 설정 (introduction에서 선호/비선호 조건 분리)
+        const introduction = existing.introduction || "";
+        const [preferredPart, avoidPart] = introduction.split("\n\n피하고 싶은 조건: ");
+        
         setFormData({
-          name: existingApplication.name || "",
-          gender: existingApplication.gender || "",
-          birthDate: existingApplication.age ? new Date(new Date().getFullYear() - existingApplication.age, 0, 1) : undefined,
-          residence: existingApplication.location || "",
-          hometown: "",
-          contact: "",
-          occupation: existingApplication.occupation || "",
+          name: existing.name || "",
+          gender: existing.gender || "",
+          birthDate: existing.age ? new Date(new Date().getFullYear() - existing.age, 0, 1) : undefined,
+          residence: existing.location || "",
+          hometown: existing.location || "",
+          contact: user.email || "",
+          occupation: existing.occupation || "",
           company: "",
-          education: existingApplication.education || "",
+          education: existing.education || "",
           school: "",
           height: "",
           mbti: "",
-          smoking: existingApplication.lifestyle_smoking || "",
-          drinking: existingApplication.lifestyle_drinking || "",
-          religion: existingApplication.religion || "",
+          smoking: existing.lifestyle_smoking || "",
+          drinking: existing.lifestyle_drinking || "",
+          religion: existing.religion || "",
           maritalStatus: "",
-          hobbies: existingApplication.hobbies?.join(", ") || "",
-          idealAgeMin: existingApplication.ideal_age_min?.toString() || "",
-          idealAgeMax: existingApplication.ideal_age_max?.toString() || "",
-          personalityKeywords: [],
-          idealReligion: "",
-          preferredConditions: "",
-          avoidConditions: "",
+          hobbies: existing.hobbies?.join(", ") || "",
+          idealAgeMin: existing.ideal_age_min?.toString() || "",
+          idealAgeMax: existing.ideal_age_max?.toString() || "",
+          personalityKeywords: existing.personality ? existing.personality.split(", ") : [],
+          idealReligion: existing.religion || "",
+          preferredConditions: preferredPart || "",
+          avoidConditions: avoidPart || "",
           allowedMaritalStatus: "",
           appearanceConditions: "",
-          occupationConditions: "",
+          occupationConditions: existing.ideal_occupation || "",
           idealMbti: ""
         });
       }
@@ -199,11 +218,13 @@ const Application = ({ user, session }: ApplicationProps) => {
       }
       
       toast({
-        title: "신청 완료",
-        description: "신청서가 성공적으로 제출되었습니다! 관리자가 검토 후 매칭을 제안해드릴 예정입니다."
+        title: isEditMode ? "정보 수정 완료" : "신청 완료",
+        description: isEditMode 
+          ? "정보가 성공적으로 수정되었습니다!" 
+          : "신청서가 성공적으로 제출되었습니다! 관리자가 검토 후 매칭을 제안해드릴 예정입니다."
       });
       
-      // 매칭 페이지로 이동
+      // 매칭 페이지로 이동 (기존 신청서가 있던 경우도 포함)
       navigate("/matching");
       
     } catch (error) {
@@ -245,10 +266,13 @@ const Application = ({ user, session }: ApplicationProps) => {
                 <span className="text-3xl font-bold text-gradient">마침</span>
               </div>
               <CardTitle className="text-2xl text-bluegray-800">
-                소개팅 신청서
+                {isEditMode ? "내 정보 수정" : "소개팅 신청서"}
               </CardTitle>
               <p className="text-bluegray-600">
-                정확한 매칭을 위해 상세한 정보를 입력해주세요
+                {isEditMode 
+                  ? "정보를 수정하고 업데이트하세요" 
+                  : "정확한 매칭을 위해 상세한 정보를 입력해주세요"
+                }
               </p>
             </CardHeader>
             
@@ -306,14 +330,30 @@ const Application = ({ user, session }: ApplicationProps) => {
                   onPersonalityKeywordChange={handlePersonalityKeywordChange}
                 />
                 
-                <Button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="w-full bg-rosegold-500 hover:bg-rosegold-600 text-white py-3 text-lg disabled:opacity-50"
-                >
-                  {isLoading ? "제출 중..." : "신청서 제출하기"}
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
+                <div className="space-y-4">
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className="w-full bg-rosegold-500 hover:bg-rosegold-600 text-white py-3 text-lg disabled:opacity-50"
+                  >
+                    {isLoading 
+                      ? (isEditMode ? "수정 중..." : "제출 중...") 
+                      : (isEditMode ? "정보 수정하기" : "신청서 제출하기")
+                    }
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                  
+                  {isEditMode && (
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => navigate("/matching")}
+                      className="w-full border-rosegold-300 text-rosegold-700 hover:bg-rosegold-50"
+                    >
+                      매칭 페이지로 돌아가기
+                    </Button>
+                  )}
+                </div>
               </form>
             </CardContent>
           </Card>

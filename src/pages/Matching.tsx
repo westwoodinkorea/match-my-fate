@@ -1,15 +1,58 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, X, MapPin, Briefcase, Calendar, GraduationCap, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Heart, X, MapPin, Briefcase, Calendar, GraduationCap, Star, Settings } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Matching = () => {
   const [currentMatch, setCurrentMatch] = useState(0);
   const [decision, setDecision] = useState<string | null>(null);
+  const [userApplication, setUserApplication] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // 사용자 신청서 확인
+  useEffect(() => {
+    const checkUserApplication = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          variant: "destructive",
+          title: "로그인 필요",
+          description: "매칭 서비스를 이용하려면 로그인이 필요합니다."
+        });
+        navigate("/login");
+        return;
+      }
+
+      const { data: application } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!application || application.status !== 'submitted') {
+        toast({
+          title: "신청서 작성 필요",
+          description: "먼저 소개팅 신청서를 작성해주세요."
+        });
+        navigate("/application");
+        return;
+      }
+
+      setUserApplication(application);
+      setLoading(false);
+    };
+
+    checkUserApplication();
+  }, [navigate, toast]);
 
   // 샘플 매칭 데이터
   const matches = [
@@ -109,15 +152,34 @@ const Matching = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rosegold-50 to-bluegray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rosegold-500 mx-auto mb-4"></div>
+          <p className="text-bluegray-600">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rosegold-50 to-bluegray-50">
       <Header />
       <div className="pt-20 pb-12">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-bluegray-800 mb-2">
-              매칭 제안
-            </h1>
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-3xl font-bold text-bluegray-800">
+                매칭 제안
+              </h1>
+              <Link to="/application">
+                <Button variant="outline" size="sm" className="border-rosegold-300 text-rosegold-700 hover:bg-rosegold-50">
+                  <Settings className="w-4 h-4 mr-2" />
+                  내 정보 수정
+                </Button>
+              </Link>
+            </div>
             <p className="text-bluegray-600">
               관리자가 선별한 맞춤 상대를 확인해보세요
             </p>
