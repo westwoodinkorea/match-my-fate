@@ -60,11 +60,16 @@ const Login = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/application`
+          redirectTo: `${window.location.origin}/application`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       });
 
       if (error) {
+        console.error("Google OAuth error:", error);
         toast({
           variant: "destructive",
           title: "구글 로그인 실패",

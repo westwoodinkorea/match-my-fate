@@ -11,12 +11,17 @@ import LifestyleSection from "@/components/forms/LifestyleSection";
 import IdealTypeSection from "@/components/forms/IdealTypeSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { User, Session } from "@supabase/supabase-js";
 
-const Application = () => {
+interface ApplicationProps {
+  user: User | null;
+  session: Session | null;
+}
+
+const Application = ({ user, session }: ApplicationProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState(null);
   
   const [formData, setFormData] = useState({
     // 기본 정보
@@ -57,10 +62,8 @@ const Application = () => {
 
   // 사용자 인증 확인 및 기존 데이터 로드
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
+    const loadUserData = async () => {
+      if (!user) {
         toast({
           variant: "destructive",
           title: "로그인 필요",
@@ -70,13 +73,11 @@ const Application = () => {
         return;
       }
       
-      setUser(session.user);
-      
       // 기존 신청서 데이터 로드
       const { data: existingApplication } = await supabase
         .from('applications')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .maybeSingle();
       
       if (existingApplication) {
@@ -112,8 +113,8 @@ const Application = () => {
       }
     };
     
-    checkUser();
-  }, [navigate, toast]);
+    loadUserData();
+  }, [user, navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
