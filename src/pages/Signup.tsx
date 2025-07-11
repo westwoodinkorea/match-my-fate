@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -18,10 +20,81 @@ const Signup = () => {
     agreePrivacy: false,
     agreeMarketing: false
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signup attempt:", formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "비밀번호 불일치",
+        description: "비밀번호와 비밀번호 확인이 일치하지 않습니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast({
+        title: "비밀번호 오류",
+        description: "비밀번호는 8자 이상이어야 합니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            display_name: formData.name,
+            phone: formData.phone
+          }
+        }
+      });
+
+      if (error) {
+        if (error.message.includes("User already registered")) {
+          toast({
+            title: "회원가입 실패",
+            description: "이미 가입된 이메일입니다. 로그인을 시도해주세요.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "회원가입 실패",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "회원가입 성공",
+          description: "회원가입이 완료되었습니다. 로그인되었습니다.",
+        });
+        
+        // 회원가입 성공시 Application 페이지로 이동
+        navigate("/application");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast({
+        title: "오류 발생",
+        description: "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -161,9 +234,9 @@ const Signup = () => {
             <Button 
               type="submit" 
               className="w-full bg-rosegold-500 hover:bg-rosegold-600 text-white py-3"
-              disabled={!formData.agreeTerms || !formData.agreePrivacy}
+              disabled={!formData.agreeTerms || !formData.agreePrivacy || isLoading}
             >
-              회원가입하기
+              {isLoading ? "회원가입 중..." : "회원가입하기"}
             </Button>
           </form>
           
