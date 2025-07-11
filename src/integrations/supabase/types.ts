@@ -14,7 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          age: number | null
+          created_at: string
+          education: string | null
+          family_background: string | null
+          gender: string | null
+          hobbies: string[] | null
+          id: string
+          ideal_age_max: number | null
+          ideal_age_min: number | null
+          ideal_education: string | null
+          ideal_gender: string | null
+          ideal_location: string | null
+          ideal_occupation: string | null
+          ideal_personality: string | null
+          introduction: string | null
+          lifestyle_drinking: string | null
+          lifestyle_exercise: string | null
+          lifestyle_pets: string | null
+          lifestyle_smoking: string | null
+          lifestyle_travel: string | null
+          location: string | null
+          name: string | null
+          occupation: string | null
+          personality: string | null
+          religion: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          education?: string | null
+          family_background?: string | null
+          gender?: string | null
+          hobbies?: string[] | null
+          id?: string
+          ideal_age_max?: number | null
+          ideal_age_min?: number | null
+          ideal_education?: string | null
+          ideal_gender?: string | null
+          ideal_location?: string | null
+          ideal_occupation?: string | null
+          ideal_personality?: string | null
+          introduction?: string | null
+          lifestyle_drinking?: string | null
+          lifestyle_exercise?: string | null
+          lifestyle_pets?: string | null
+          lifestyle_smoking?: string | null
+          lifestyle_travel?: string | null
+          location?: string | null
+          name?: string | null
+          occupation?: string | null
+          personality?: string | null
+          religion?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          education?: string | null
+          family_background?: string | null
+          gender?: string | null
+          hobbies?: string[] | null
+          id?: string
+          ideal_age_max?: number | null
+          ideal_age_min?: number | null
+          ideal_education?: string | null
+          ideal_gender?: string | null
+          ideal_location?: string | null
+          ideal_occupation?: string | null
+          ideal_personality?: string | null
+          introduction?: string | null
+          lifestyle_drinking?: string | null
+          lifestyle_exercise?: string | null
+          lifestyle_pets?: string | null
+          lifestyle_smoking?: string | null
+          lifestyle_travel?: string | null
+          location?: string | null
+          name?: string | null
+          occupation?: string | null
+          personality?: string | null
+          religion?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
