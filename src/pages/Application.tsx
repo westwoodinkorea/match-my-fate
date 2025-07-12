@@ -46,7 +46,7 @@ const Application = ({ user, session }: ApplicationProps) => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-rosegold-50 to-bluegray-50">
-        <Header />
+        <Header user={user} session={session} />
         <div className="pt-20 pb-12">
           <div className="container mx-auto px-4 max-w-4xl">
             <Card className="shadow-elegant">
