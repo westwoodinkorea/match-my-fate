@@ -1,15 +1,28 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const Signup = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // 이미 로그인된 사용자는 자동으로 application 페이지로 리다이렉트
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/application');
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
 
   const handleGoogleSignup = async () => {
     setIsGoogleLoading(true);
