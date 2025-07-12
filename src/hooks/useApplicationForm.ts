@@ -91,10 +91,12 @@ export const useApplicationForm = () => {
   };
 
   const setFormDataFromApplication = (application: any, userEmail: string) => {
+    console.log('Setting form data from application:', application);
+    
     const introduction = application.introduction || "";
     const [preferredPart, avoidPart] = introduction.split("\n\n피하고 싶은 조건: ");
     
-    setFormData({
+    const formData = {
       name: application.name || "",
       gender: application.gender || "",
       birthDate: application.age ? new Date(new Date().getFullYear() - application.age, 0, 1) : undefined,
@@ -122,7 +124,10 @@ export const useApplicationForm = () => {
       appearanceConditions: "",
       occupationConditions: application.ideal_occupation || "",
       idealMbti: ""
-    });
+    };
+    
+    console.log('Mapped form data:', formData);
+    setFormData(formData);
   };
 
   return {

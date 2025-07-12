@@ -27,11 +27,15 @@ export const useApplicationState = (user: User | null) => {
       }
       
       // 기존 신청서 데이터 로드
-      const { data: existing } = await supabase
+      const { data: existing, error } = await supabase
         .from('applications')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
+      
+      console.log('Loading existing application for user:', user.id);
+      console.log('Existing application data:', existing);
+      console.log('Query error:', error);
       
       if (existing) {
         setExistingApplication(existing);
@@ -40,6 +44,8 @@ export const useApplicationState = (user: User | null) => {
         if (existing.status === 'submitted') {
           setShowExistingApplicationDialog(true);
         }
+      } else {
+        console.log('No existing application found');
       }
     };
     
