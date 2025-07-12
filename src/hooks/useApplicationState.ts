@@ -11,6 +11,7 @@ export const useApplicationState = (user: User | null) => {
   const [isLoading, setIsLoading] = useState(false);
   const [existingApplication, setExistingApplication] = useState<any>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [showExistingApplicationDialog, setShowExistingApplicationDialog] = useState(false);
 
   // 사용자 인증 확인 및 기존 데이터 로드
   useEffect(() => {
@@ -37,12 +38,7 @@ export const useApplicationState = (user: User | null) => {
         
         // 이미 제출된 신청서가 있다면 (status가 'submitted'인 경우)
         if (existing.status === 'submitted') {
-          // 매칭 페이지로 리디렉트하거나 편집 모드 제안
-          toast({
-            title: "신청서가 이미 제출되었습니다",
-            description: "이미 제출된 신청서가 있습니다. 정보를 수정하시겠습니까?",
-          });
-          setIsEditMode(true);
+          setShowExistingApplicationDialog(true);
         }
       }
     };
@@ -152,10 +148,24 @@ export const useApplicationState = (user: User | null) => {
     }
   };
 
+  const handleEditApplication = () => {
+    setIsEditMode(true);
+    setShowExistingApplicationDialog(false);
+  };
+
+  const handleGoToMatching = () => {
+    setShowExistingApplicationDialog(false);
+    navigate("/matching");
+  };
+
   return {
     isLoading,
     existingApplication,
     isEditMode,
-    submitApplication
+    showExistingApplicationDialog,
+    submitApplication,
+    handleEditApplication,
+    handleGoToMatching,
+    setShowExistingApplicationDialog
   };
 };
