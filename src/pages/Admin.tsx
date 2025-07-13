@@ -20,9 +20,22 @@ interface Application {
   location: string;
   occupation: string;
   education: string;
+  family_background: string;
   religion: string;
   personality: string;
   hobbies: string[];
+  lifestyle_travel: string;
+  lifestyle_pets: string;
+  lifestyle_smoking: string;
+  lifestyle_drinking: string;
+  lifestyle_exercise: string;
+  ideal_gender: string;
+  ideal_location: string;
+  ideal_age_min: number;
+  ideal_age_max: number;
+  ideal_education: string;
+  ideal_personality: string;
+  ideal_occupation: string;
   introduction: string;
   status: string;
   created_at: string;
@@ -208,23 +221,104 @@ const Admin: React.FC<AdminProps> = ({ user }) => {
                       {app.age}세 • {app.location} • {app.occupation}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-2">학력</p>
-                      <p className="text-sm">{app.education}</p>
+                  <CardContent className="space-y-3">
+                    {/* 기본 정보 */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">학력</p>
+                        <p className="text-sm">{app.education || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">종교</p>
+                        <p className="text-sm">{app.religion || '-'}</p>
+                      </div>
                     </div>
+                    
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">종교</p>
-                      <p className="text-sm">{app.religion}</p>
+                      <p className="text-xs text-muted-foreground mb-1">가족 배경</p>
+                      <p className="text-sm">{app.family_background || '-'}</p>
                     </div>
+                    
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">성격</p>
-                      <p className="text-sm">{app.personality}</p>
+                      <p className="text-xs text-muted-foreground mb-1">성격</p>
+                      <p className="text-sm">{app.personality || '-'}</p>
                     </div>
+                    
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">취미</p>
-                      <p className="text-sm">{app.hobbies?.join(', ')}</p>
+                      <p className="text-xs text-muted-foreground mb-1">취미</p>
+                      <p className="text-sm">{app.hobbies?.join(', ') || '-'}</p>
                     </div>
+                    
+                    {/* 라이프스타일 */}
+                    <div className="border-t pt-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">라이프스타일</p>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">여행</span>
+                          <span>{app.lifestyle_travel || '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">반려동물</span>
+                          <span>{app.lifestyle_pets || '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">흡연</span>
+                          <span>{app.lifestyle_smoking || '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">음주</span>
+                          <span>{app.lifestyle_drinking || '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">운동</span>
+                          <span>{app.lifestyle_exercise || '-'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* 이상형 정보 */}
+                    <div className="border-t pt-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">이상형</p>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">성별</span>
+                          <span>{app.ideal_gender === 'male' ? '남성' : app.ideal_gender === 'female' ? '여성' : '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">지역</span>
+                          <span>{app.ideal_location || '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">나이</span>
+                          <span>
+                            {app.ideal_age_min && app.ideal_age_max ? 
+                              `${app.ideal_age_min}-${app.ideal_age_max}세` : '-'}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">학력</span>
+                          <span>{app.ideal_education || '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">성격</span>
+                          <span>{app.ideal_personality || '-'}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-muted-foreground">직업</span>
+                          <span>{app.ideal_occupation || '-'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* 자기소개 */}
+                    {app.introduction && (
+                      <div className="border-t pt-3">
+                        <p className="text-xs font-medium text-muted-foreground mb-2">자기소개</p>
+                        <p className="text-sm bg-muted p-2 rounded text-foreground">
+                          {app.introduction}
+                        </p>
+                      </div>
+                    )}
                     
                     <Dialog>
                       <DialogTrigger asChild>
