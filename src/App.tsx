@@ -14,6 +14,7 @@ import Signup from "./pages/Signup";
 import Application from "./pages/Application";
 import Matching from "./pages/Matching";
 import Payment from "./pages/Payment";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -106,6 +107,7 @@ const App = () => {
             <Route path="/application" element={<Application user={user} session={session} />} />
             <Route path="/matching" element={<Matching />} />
             <Route path="/payment" element={<Payment />} />
+            <Route path="/admin" element={<Admin user={user} />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

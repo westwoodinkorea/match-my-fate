@@ -9,17 +9,29 @@ import Header from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+interface MatchProposal {
+  id: string;
+  proposer_id: string;
+  proposed_match_id: string;
+  admin_id: string;
+  status: string;
+  admin_message: string;
+  created_at: string;
+  proposed_match_info: any;
+}
+
 const Matching = () => {
   const [currentMatch, setCurrentMatch] = useState(0);
   const [decision, setDecision] = useState<string | null>(null);
   const [userApplication, setUserApplication] = useState<any>(null);
+  const [matchProposals, setMatchProposals] = useState<MatchProposal[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // 사용자 신청서 확인
+  // 사용자 신청서 확인 및 매칭 제안 로드
   useEffect(() => {
-    const checkUserApplication = async () => {
+    const loadData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -48,37 +60,110 @@ const Matching = () => {
       }
 
       setUserApplication(application);
+
+      // 나에게 제안된 매칭들 로드
+      const { data: proposals } = await supabase
+        .from('match_proposals')
+        .select('*')
+        .eq('proposer_id', user.id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (proposals && proposals.length > 0) {
+        // 각 제안에 대해 상대방 정보 로드
+        const enrichedProposals = await Promise.all(
+          proposals.map(async (proposal) => {
+            const { data: matchInfo } = await supabase
+              .from('applications')
+              .select('*')
+              .eq('user_id', proposal.proposed_match_id)
+              .single();
+
+            return {
+              ...proposal,
+              proposed_match_info: matchInfo
+            };
+          })
+        );
+
+        setMatchProposals(enrichedProposals);
+      }
+
       setLoading(false);
     };
 
-    checkUserApplication();
+    loadData();
   }, [navigate, toast]);
 
-  // 샘플 매칭 데이터
-  const matches = [
-    {
-      id: 1,
-      name: "김**",
-      age: 29,
-      location: "서울 강남구",
-      occupation: "IT 기업 마케터",
-      education: "대학교 졸업",
-      hobby: "영화감상, 카페투어",
-      introduction: "새로운 사람들과의 만남을 좋아하는 긍정적인 성격입니다. 함께 맛있는 음식을 먹고 좋은 영화를 보며 즐거운 시간을 보내고 싶어요!",
-      matchScore: 85,
-      profileImage: "/placeholder.svg"
-    }
-  ];
+  // 매칭 제안이 없을 때 메시지 표시
+  if (matchProposals.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rosegold-50 to-bluegray-50">
+        <Header />
+        <div className="pt-20 pb-12">
+          <div className="container mx-auto px-4 max-w-2xl text-center">
+            <Card className="shadow-elegant">
+              <CardContent className="p-8">
+                <div className="w-16 h-16 rounded-full bg-rosegold-200 flex items-center justify-center mx-auto mb-6">
+                  <Heart className="w-8 h-8 text-rosegold-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-bluegray-800 mb-4">
+                  아직 매칭 제안이 없습니다
+                </h2>
+                <p className="text-bluegray-600 mb-8">
+                  관리자가 곧 적합한 상대를 찾아 제안해드릴 예정입니다. 조금만 기다려주세요!
+                </p>
+                <Link to="/application">
+                  <Button className="bg-rosegold-500 hover:bg-rosegold-600 text-white">
+                    <Settings className="w-4 h-4 mr-2" />
+                    내 정보 수정하기
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const currentMatchData = matches[currentMatch];
+  const currentMatchData = matchProposals[currentMatch];
+  const matchInfo = currentMatchData?.proposed_match_info;
 
-  const handleDecision = (choice: 'accept' | 'reject') => {
-    setDecision(choice);
-    if (choice === 'accept') {
-      console.log("매칭 수락됨");
-    } else {
-      console.log("매칭 거절됨");
-      // 다음 매칭으로 이동하는 로직 추가 가능
+  const handleDecision = async (choice: 'accept' | 'reject') => {
+    try {
+      const { error } = await supabase
+        .from('match_proposals')
+        .update({ status: choice === 'accept' ? 'accepted' : 'rejected' })
+        .eq('id', currentMatchData.id);
+
+      if (error) throw error;
+
+      setDecision(choice);
+      
+      if (choice === 'accept') {
+        toast({
+          title: "매칭 수락",
+          description: "매칭을 수락하셨습니다!"
+        });
+      } else {
+        toast({
+          title: "매칭 거절",
+          description: "다른 매칭 제안을 기다려주세요."
+        });
+        // 다음 매칭으로 이동
+        if (currentMatch < matchProposals.length - 1) {
+          setCurrentMatch(currentMatch + 1);
+          setDecision(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating match proposal:', error);
+      toast({
+        variant: "destructive",
+        title: "오류",
+        description: "매칭 응답 중 오류가 발생했습니다."
+      });
     }
   };
 
@@ -97,7 +182,7 @@ const Matching = () => {
                   매칭이 성사되었습니다!
                 </h2>
                 <p className="text-bluegray-600 mb-8">
-                  {currentMatchData.name}님과의 매칭을 위해 결제를 진행해주세요.
+                  {matchInfo?.name}님과의 매칭을 위해 결제를 진행해주세요.
                 </p>
                 <div className="space-y-4">
                   <Link to="/payment">
@@ -189,16 +274,16 @@ const Matching = () => {
             <CardHeader className="text-center">
               <div className="w-24 h-24 rounded-full bg-rosegold-200 mx-auto mb-4 flex items-center justify-center">
                 <span className="text-2xl font-bold text-rosegold-700">
-                  {currentMatchData.name.charAt(0)}
+                  {matchInfo?.name?.charAt(0) || '?'}
                 </span>
               </div>
               <CardTitle className="text-xl text-bluegray-800">
-                {currentMatchData.name}
+                {matchInfo?.name || '이름 없음'}
               </CardTitle>
               <div className="flex items-center justify-center space-x-2">
                 <Badge variant="secondary" className="bg-rosegold-100 text-rosegold-700">
                   <Star className="w-3 h-3 mr-1" />
-                  매칭률 {currentMatchData.matchScore}%
+                  관리자 추천
                 </Badge>
               </div>
             </CardHeader>
@@ -208,33 +293,43 @@ const Matching = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
                   <Calendar className="w-4 h-4 text-rosegold-600" />
-                  <span className="text-sm text-bluegray-700">{currentMatchData.age}세</span>
+                  <span className="text-sm text-bluegray-700">{matchInfo?.age}세</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4 text-rosegold-600" />
-                  <span className="text-sm text-bluegray-700">{currentMatchData.location}</span>
+                  <span className="text-sm text-bluegray-700">{matchInfo?.location}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Briefcase className="w-4 h-4 text-rosegold-600" />
-                  <span className="text-sm text-bluegray-700">{currentMatchData.occupation}</span>
+                  <span className="text-sm text-bluegray-700">{matchInfo?.occupation}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <GraduationCap className="w-4 h-4 text-rosegold-600" />
-                  <span className="text-sm text-bluegray-700">{currentMatchData.education}</span>
+                  <span className="text-sm text-bluegray-700">{matchInfo?.education}</span>
                 </div>
               </div>
 
               {/* 취미 */}
               <div>
                 <h3 className="font-semibold text-bluegray-800 mb-2">취미</h3>
-                <p className="text-bluegray-600">{currentMatchData.hobby}</p>
+                <p className="text-bluegray-600">{matchInfo?.hobbies?.join(', ') || '정보 없음'}</p>
               </div>
+
+              {/* 관리자 메시지 */}
+              {currentMatchData.admin_message && (
+                <div>
+                  <h3 className="font-semibold text-bluegray-800 mb-2">관리자 추천 이유</h3>
+                  <p className="text-bluegray-600 leading-relaxed bg-rosegold-50 p-3 rounded-lg">
+                    {currentMatchData.admin_message}
+                  </p>
+                </div>
+              )}
 
               {/* 소개 */}
               <div>
                 <h3 className="font-semibold text-bluegray-800 mb-2">소개</h3>
                 <p className="text-bluegray-600 leading-relaxed">
-                  {currentMatchData.introduction}
+                  {matchInfo?.introduction || '소개 정보가 없습니다.'}
                 </p>
               </div>
 

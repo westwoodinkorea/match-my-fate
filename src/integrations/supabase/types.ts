@@ -107,6 +107,54 @@ export type Database = {
         }
         Relationships: []
       }
+      match_proposals: {
+        Row: {
+          admin_id: string
+          admin_message: string | null
+          created_at: string
+          id: string
+          proposed_match_id: string
+          proposer_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          admin_message?: string | null
+          created_at?: string
+          id?: string
+          proposed_match_id: string
+          proposer_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          admin_message?: string | null
+          created_at?: string
+          id?: string
+          proposed_match_id?: string
+          proposer_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_proposed_match"
+            columns: ["proposed_match_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_proposer"
+            columns: ["proposer_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
