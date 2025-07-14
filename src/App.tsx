@@ -14,6 +14,9 @@ import Signup from "./pages/Signup";
 import Application from "./pages/Application";
 import Matching from "./pages/Matching";
 import Payment from "./pages/Payment";
+import ContactExchange from "./pages/ContactExchange";
+import MatchStatus from "./pages/MatchStatus";
+import MatchHistory from "./pages/MatchHistory";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -107,6 +110,9 @@ const App = () => {
             <Route path="/application" element={<Application user={user} session={session} />} />
             <Route path="/matching" element={<Matching />} />
             <Route path="/payment" element={<Payment />} />
+            <Route path="/contact-exchange" element={<ContactExchange />} />
+            <Route path="/match-status" element={<MatchStatus />} />
+            <Route path="/match-history" element={<MatchHistory />} />
             <Route path="/admin" element={<Admin user={user} />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import RejectionReasonModal from "@/components/RejectionReasonModal";
 
 interface MatchProposal {
   id: string;
@@ -26,6 +27,8 @@ const Matching = () => {
   const [userApplication, setUserApplication] = useState<any>(null);
   const [matchProposals, setMatchProposals] = useState<MatchProposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [rejectedMatchId, setRejectedMatchId] = useState<string>('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -132,9 +135,11 @@ const Matching = () => {
 
   const handleDecision = async (choice: 'accept' | 'reject') => {
     try {
+      const status = choice === 'accept' ? 'payment_pending' : 'rejected';
+      
       const { error } = await supabase
         .from('match_proposals')
-        .update({ status: choice === 'accept' ? 'accepted' : 'rejected' })
+        .update({ status })
         .eq('id', currentMatchData.id);
 
       if (error) throw error;
@@ -144,18 +149,16 @@ const Matching = () => {
       if (choice === 'accept') {
         toast({
           title: "매칭 수락",
-          description: "매칭을 수락하셨습니다!"
+          description: "결제 페이지로 이동합니다."
         });
+        // 결제 페이지로 이동
+        setTimeout(() => {
+          navigate(`/payment?match_id=${currentMatchData.id}`);
+        }, 1500);
       } else {
-        toast({
-          title: "매칭 거절",
-          description: "다른 매칭 제안을 기다려주세요."
-        });
-        // 다음 매칭으로 이동
-        if (currentMatch < matchProposals.length - 1) {
-          setCurrentMatch(currentMatch + 1);
-          setDecision(null);
-        }
+        // 거절 이유 수집 모달 표시
+        setRejectedMatchId(currentMatchData.id);
+        setShowRejectionModal(true);
       }
     } catch (error) {
       console.error('Error updating match proposal:', error);
@@ -164,6 +167,19 @@ const Matching = () => {
         title: "오류",
         description: "매칭 응답 중 오류가 발생했습니다."
       });
+    }
+  };
+
+  const handleRejectionComplete = () => {
+    toast({
+      title: "매칭 거절",
+      description: "다른 매칭 제안을 기다려주세요."
+    });
+    
+    // 다음 매칭으로 이동
+    if (currentMatch < matchProposals.length - 1) {
+      setCurrentMatch(currentMatch + 1);
+      setDecision(null);
     }
   };
 
@@ -355,6 +371,13 @@ const Matching = () => {
           </Card>
         </div>
       </div>
+
+      <RejectionReasonModal
+        isOpen={showRejectionModal}
+        onClose={() => setShowRejectionModal(false)}
+        matchProposalId={rejectedMatchId}
+        onComplete={handleRejectionComplete}
+      />
     </div>
   );
 };

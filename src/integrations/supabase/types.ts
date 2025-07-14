@@ -107,6 +107,94 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_exchanges: {
+        Row: {
+          created_at: string
+          exchange_status: string
+          exchanged_at: string | null
+          id: string
+          match_proposal_id: string
+          proposed_match_contact: string | null
+          proposer_contact: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          exchange_status?: string
+          exchanged_at?: string | null
+          id?: string
+          match_proposal_id: string
+          proposed_match_contact?: string | null
+          proposer_contact?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          exchange_status?: string
+          exchanged_at?: string | null
+          id?: string
+          match_proposal_id?: string
+          proposed_match_contact?: string | null
+          proposer_contact?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_exchanges_match_proposal_id_fkey"
+            columns: ["match_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "match_proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          match_proposal_id: string
+          paid_at: string | null
+          payment_status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          match_proposal_id: string
+          paid_at?: string | null
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          match_proposal_id?: string
+          paid_at?: string | null
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_payments_match_proposal_id_fkey"
+            columns: ["match_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "match_proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_proposals: {
         Row: {
           admin_id: string
@@ -152,6 +240,44 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "applications"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      match_rejections: {
+        Row: {
+          additional_comments: string | null
+          created_at: string
+          id: string
+          match_proposal_id: string
+          rejection_category: string | null
+          rejection_reason: string | null
+          user_id: string
+        }
+        Insert: {
+          additional_comments?: string | null
+          created_at?: string
+          id?: string
+          match_proposal_id: string
+          rejection_category?: string | null
+          rejection_reason?: string | null
+          user_id: string
+        }
+        Update: {
+          additional_comments?: string | null
+          created_at?: string
+          id?: string
+          match_proposal_id?: string
+          rejection_category?: string | null
+          rejection_reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_rejections_match_proposal_id_fkey"
+            columns: ["match_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "match_proposals"
+            referencedColumns: ["id"]
           },
         ]
       }
