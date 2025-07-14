@@ -200,9 +200,13 @@ export type Database = {
           admin_id: string
           admin_message: string | null
           created_at: string
+          expires_at: string | null
+          final_status: string | null
           id: string
           proposed_match_id: string
+          proposed_match_response: string | null
           proposer_id: string
+          proposer_response: string | null
           status: string
           updated_at: string
         }
@@ -210,9 +214,13 @@ export type Database = {
           admin_id: string
           admin_message?: string | null
           created_at?: string
+          expires_at?: string | null
+          final_status?: string | null
           id?: string
           proposed_match_id: string
+          proposed_match_response?: string | null
           proposer_id: string
+          proposer_response?: string | null
           status?: string
           updated_at?: string
         }
@@ -220,9 +228,13 @@ export type Database = {
           admin_id?: string
           admin_message?: string | null
           created_at?: string
+          expires_at?: string | null
+          final_status?: string | null
           id?: string
           proposed_match_id?: string
+          proposed_match_response?: string | null
           proposer_id?: string
+          proposer_response?: string | null
           status?: string
           updated_at?: string
         }
@@ -281,6 +293,38 @@ export type Database = {
           },
         ]
       }
+      match_responses: {
+        Row: {
+          id: string
+          match_proposal_id: string
+          responded_at: string
+          response: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          match_proposal_id: string
+          responded_at?: string
+          response: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          match_proposal_id?: string
+          responded_at?: string
+          response?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_responses_match_proposal_id_fkey"
+            columns: ["match_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "match_proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -319,6 +363,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_old_matches: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
