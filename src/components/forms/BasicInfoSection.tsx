@@ -159,7 +159,11 @@ const BasicInfoSection = ({ formData, onInputChange }: BasicInfoSectionProps) =>
           <Input
             placeholder="010-0000-0000"
             value={formData.contact}
-            onChange={(e) => onInputChange("contact", e.target.value)}
+            onChange={(e) => {
+              // 숫자와 하이픈만 허용
+              const value = e.target.value.replace(/[^0-9-]/g, '');
+              onInputChange("contact", value);
+            }}
             className="border-rosegold-200 focus:border-rosegold-400"
             required
           />

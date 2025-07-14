@@ -102,7 +102,7 @@ export const useApplicationForm = () => {
       birthDate: application.age ? new Date(new Date().getFullYear() - application.age, 0, 1) : undefined,
       residence: application.location || "",
       hometown: application.location || "",
-      contact: userEmail || "",
+      contact: "",
       occupation: application.occupation || "",
       company: "",
       education: application.education || "",
