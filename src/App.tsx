@@ -28,34 +28,23 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Auth state 리스너 설정
+    // Auth state 리스너를 먼저 설정
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
-        
-        // 세션이 변경될 때마다 localStorage에 저장
-        if (session) {
-          localStorage.setItem('supabase.auth.session', JSON.stringify(session));
-        } else {
-          localStorage.removeItem('supabase.auth.session');
-        }
-        
         setLoading(false);
       }
     );
 
-    // 현재 세션 확인
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    // 그 다음 현재 세션 확인
+    supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-    };
-    
-    checkSession();
+    });
 
     return () => subscription.unsubscribe();
   }, []);
