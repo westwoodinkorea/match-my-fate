@@ -49,13 +49,13 @@ const Header = ({ user, session }: HeaderProps) => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-rosegold-100">
-      <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="w-7 h-7 rounded-full gradient-rosegold flex items-center justify-center">
-            <Heart className="w-3.5 h-3.5 text-white" />
+    <header className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-border/50 shadow-soft">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <Link to="/" className="flex items-center space-x-3 hover-lift">
+          <div className="w-8 h-8 rounded-full gradient-warm-glow flex items-center justify-center shadow-soft">
+            <Heart className="w-4 h-4 text-white" />
           </div>
-          <span className="text-xl font-bold text-gradient">마침</span>
+          <span className="text-2xl font-bold text-gradient">마침</span>
         </Link>
         
         {/* Mobile menu button */}
@@ -113,12 +113,12 @@ const Header = ({ user, session }: HeaderProps) => {
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" className="text-bluegray-700 hover:text-rosegold-600">
+                <Button variant="ghost" className="text-muted-foreground hover:text-primary">
                   로그인
                 </Button>
               </Link>
               <Link to="/signup">
-                <Button className="bg-rosegold-500 hover:bg-rosegold-600 text-white shadow-elegant">
+                <Button variant="premium" size="lg">
                   시작하기
                 </Button>
               </Link>

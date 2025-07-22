@@ -37,35 +37,35 @@ const SimpleProcess = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-white">
+    <section className="py-20 sm:py-24 lg:py-32 bg-gradient-to-b from-background to-accent/20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 sm:mb-16 animate-slide-up">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+        <div className="text-center mb-16 sm:mb-20 animate-in">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">
             <span className="text-gradient">5단계</span> 간편 프로세스
           </h2>
-          <p className="text-lg sm:text-xl text-bluegray-600 max-w-2xl mx-auto px-4">
+          <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto px-4">
             복잡한 절차 없이, 단 5단계로 특별한 인연을 만나보세요
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 sm:gap-10">
           {steps.map((step, index) => (
             <Card 
               key={index}
-              className="relative border-rosegold-100 hover:shadow-elegant transition-all duration-300 animate-slide-up"
+              className="relative border-border/50 glass-card hover-glow animate-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <CardContent className="p-6 text-center">
-                <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full gradient-rosegold flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">{step.number}</span>
+              <CardContent className="p-8 text-center">
+                <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full gradient-warm-glow flex items-center justify-center shadow-glow">
+                  <span className="text-white font-bold text-base">{step.number}</span>
                 </div>
-                <div className="w-12 h-12 rounded-full bg-rosegold-50 flex items-center justify-center mx-auto mb-4 mt-2">
-                  <step.icon className="w-6 h-6 text-rosegold-600" />
+                <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6 mt-4 shadow-soft">
+                  <step.icon className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold mb-3 text-bluegray-800">
+                <h3 className="text-xl font-bold mb-4 text-foreground">
                   {step.title}
                 </h3>
-                <p className="text-sm text-bluegray-600 leading-relaxed">
+                <p className="text-base text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>
               </CardContent>
