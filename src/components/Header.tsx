@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Heart, Menu, X, User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -55,7 +56,10 @@ const Header = ({ user, session }: HeaderProps) => {
           <div className="w-8 h-8 rounded-full gradient-warm-glow flex items-center justify-center shadow-soft">
             <Heart className="w-4 h-4 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gradient">마침</span>
+          <div className="flex items-center space-x-2">
+            <span className="text-2xl font-bold text-gradient">마침</span>
+            <Badge variant="secondary" className="text-xs">Beta</Badge>
+          </div>
         </Link>
         
         {/* Mobile menu button */}
