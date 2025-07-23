@@ -58,7 +58,7 @@ const Header = ({ user, session }: HeaderProps) => {
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-2xl font-bold text-gradient">마침</span>
-            <Badge variant="secondary" className="text-xs">Beta</Badge>
+            <Badge variant="beta" className="text-xs font-bold">Beta</Badge>
           </div>
         </Link>
         
