@@ -245,7 +245,7 @@ const Matching = () => {
     const otherResponse = proposal.other_response_status;
     
     if (userResponse === 'accepted' && otherResponse === 'accepted') {
-      return { type: 'matched', message: '매칭 성사! 결제를 진행하세요.' };
+      return { type: 'matched', message: '매칭 성사! 연락처를 교환하세요.' };
     } else if (userResponse === 'rejected' || otherResponse === 'rejected') {
       return { type: 'rejected', message: '매칭이 거절되었습니다.' };
     } else if (userResponse === 'accepted') {
@@ -359,10 +359,10 @@ const Matching = () => {
                       <span className="font-semibold text-green-800">매칭 성사!</span>
                     </div>
                     <Button 
-                      onClick={() => navigate(`/payment?match_id=${currentMatchData.id}`)}
+                      onClick={() => navigate(`/contact-exchange?match_id=${currentMatchData.id}`)}
                       className="bg-green-600 hover:bg-green-700"
                     >
-                      결제하기
+                      연락처 교환하기
                     </Button>
                   </div>
                 </CardContent>

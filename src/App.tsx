@@ -13,7 +13,6 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Application from "./pages/Application";
 import Matching from "./pages/Matching";
-import Payment from "./pages/Payment";
 import ContactExchange from "./pages/ContactExchange";
 import MatchStatus from "./pages/MatchStatus";
 import MatchHistory from "./pages/MatchHistory";
@@ -98,7 +97,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/application" element={<Application user={user} session={session} />} />
             <Route path="/matching" element={<Matching />} />
-            <Route path="/payment" element={<Payment />} />
+            
             <Route path="/contact-exchange" element={<ContactExchange />} />
             <Route path="/match-status" element={<MatchStatus />} />
             <Route path="/match-history" element={<MatchHistory />} />

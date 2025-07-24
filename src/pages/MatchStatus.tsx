@@ -98,8 +98,6 @@ const MatchStatus = () => {
       pending: { label: '대기중', variant: 'secondary' as const, icon: Clock },
       accepted: { label: '수락됨', variant: 'default' as const, icon: CheckCircle },
       rejected: { label: '거절됨', variant: 'destructive' as const, icon: XCircle },
-      payment_pending: { label: '결제대기', variant: 'outline' as const, icon: CreditCard },
-      payment_completed: { label: '결제완료', variant: 'default' as const, icon: CheckCircle },
       contact_exchanged: { label: '연락처교환', variant: 'default' as const, icon: MessageCircle },
       completed: { label: '매칭완료', variant: 'default' as const, icon: Heart },
     };
@@ -122,9 +120,6 @@ const MatchStatus = () => {
     }));
   };
 
-  const handlePayment = (matchId: string) => {
-    navigate(`/payment?match_id=${matchId}`);
-  };
 
   const handleContactExchange = (matchId: string) => {
     navigate(`/contact-exchange?match_id=${matchId}`);
@@ -190,33 +185,7 @@ const MatchStatus = () => {
                     </div>
                   )}
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {/* 결제 정보 */}
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-gray-900">결제 상태</h4>
-                      {match.match_payments && match.match_payments.length > 0 ? (
-                        <div className="bg-gray-50 p-3 rounded-lg">
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm">
-                              {match.match_payments[0].payment_status === 'paid' ? '결제완료' : '결제대기'}
-                            </span>
-                            <span className="font-semibold">
-                              {match.match_payments[0].amount?.toLocaleString()}원
-                            </span>
-                          </div>
-                          {match.match_payments[0].paid_at && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              결제일: {new Date(match.match_payments[0].paid_at).toLocaleDateString('ko-KR')}
-                            </p>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="bg-gray-50 p-3 rounded-lg">
-                          <p className="text-sm text-gray-600">결제 정보 없음</p>
-                        </div>
-                      )}
-                    </div>
-
+                  <div className="space-y-4">
                     {/* 연락처 교환 정보 */}
                     <div className="space-y-2">
                       <h4 className="font-semibold text-gray-900">연락처 교환</h4>
@@ -258,13 +227,7 @@ const MatchStatus = () => {
 
                   {/* 액션 버튼들 */}
                   <div className="flex gap-2 flex-wrap">
-                    {match.status === 'accepted' && !match.match_payments?.length && (
-                      <Button onClick={() => handlePayment(match.id)}>
-                        결제하기
-                      </Button>
-                    )}
-                    
-                    {match.status === 'payment_completed' && !match.contact_exchanges?.length && (
+                    {match.status === 'accepted' && !match.contact_exchanges?.length && (
                       <Button onClick={() => handleContactExchange(match.id)}>
                         연락처 교환하기
                       </Button>
