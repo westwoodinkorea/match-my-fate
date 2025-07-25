@@ -1,6 +1,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, FileText, Heart, CreditCard, Calendar } from "lucide-react";
+import { UserPlus, FileText, Heart, MessageCircle, Calendar } from "lucide-react";
 
 const SimpleProcess = () => {
   const steps = [
@@ -30,9 +30,9 @@ const SimpleProcess = () => {
     },
     {
       number: "05",
-      icon: CreditCard,
-      title: "결제 및 만남",
-      description: "수락 시 결제 후 연결이 완료됩니다"
+      icon: MessageCircle,
+      title: "1:1 채팅 생성",
+      description: "매칭 성공 시 1:1 채팅방이 생성됩니다"
     }
   ];
 
