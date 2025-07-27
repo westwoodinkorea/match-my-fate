@@ -40,15 +40,6 @@ const SimpleHero = () => {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link to="/application" className="w-full sm:w-auto">
-              <Button 
-                variant="glass"
-                size="xl"
-                className="w-full sm:w-auto"
-              >
-                서비스 둘러보기
-              </Button>
-            </Link>
           </div>
         </div>
       </div>
