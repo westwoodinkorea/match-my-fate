@@ -61,6 +61,7 @@ const Admin: React.FC<AdminProps> = ({ user }) => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [matchProposals, setMatchProposals] = useState<MatchProposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [selectedProposer, setSelectedProposer] = useState<Application | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<string>("");
   const [adminMessage, setAdminMessage] = useState("");
@@ -68,9 +69,24 @@ const Admin: React.FC<AdminProps> = ({ user }) => {
 
   useEffect(() => {
     if (user) {
-      loadData();
+      checkAdminStatus();
     }
   }, [user]);
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data, error } = await supabase.rpc('is_admin');
+      if (error) throw error;
+      
+      setIsAdmin(data);
+      if (data) {
+        loadData();
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -177,12 +193,23 @@ const Admin: React.FC<AdminProps> = ({ user }) => {
     );
   };
 
-  if (loading) {
+  if (loading || isAdmin === null) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">데이터를 불러오는 중...</p>
+          <p className="mt-4 text-muted-foreground">권한을 확인하는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-destructive mb-4">접근 권한이 없습니다</h1>
+          <p className="text-muted-foreground">관리자만 접근할 수 있는 페이지입니다.</p>
         </div>
       </div>
     );
