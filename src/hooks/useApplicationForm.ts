@@ -86,10 +86,11 @@ export const useApplicationForm = () => {
 
   const setFormDataFromApplication = (application: any, userEmail: string) => {
     console.log('Setting form data from application:', application);
+    console.log('Current user email:', userEmail);
     
     // introduction에서 preferredConditions와 avoidConditions 분리
     const introduction = application.introduction || "";
-    const [preferredPart, avoidPart] = introduction.split("\n\n원하고 싶지 않은 조건: ");
+    const [preferredPart, avoidPart] = introduction.split("\n\n피하고 싶은 조건: ");
     
     // age에서 birthDate 계산
     const currentYear = new Date().getFullYear();
