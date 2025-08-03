@@ -79,10 +79,12 @@ export const useApplicationForm = () => {
  const setFormDataFromApplication = (application: any, userEmail: string) => {
    console.log('Setting form data from application:', application);
    
-   // 생년월일 파싱
+   // 생년월일 파싱 (age로부터 역산)
    let birthDate: Date | undefined;
-   if (application?.birth_date) {
-     birthDate = new Date(application.birth_date);
+   if (application?.age) {
+     const currentYear = new Date().getFullYear();
+     const birthYear = currentYear - application.age;
+     birthDate = new Date(birthYear, 0, 1); // 1월 1일로 설정
    }
    
    // introduction 텍스트에서 각 필드 파싱
@@ -90,19 +92,27 @@ export const useApplicationForm = () => {
    let preferredConditions = "";
    let avoidConditions = "";
    
-   if (introduction.includes("선호하는 조건:")) {
+   if (introduction.includes("피하고 싶은 조건:")) {
      const parts = introduction.split("피하고 싶은 조건:");
-     preferredConditions = parts[0].replace("선호하는 조건:", "").trim();
-     avoidConditions = parts[1] || "";
+     preferredConditions = parts[0].trim();
+     avoidConditions = parts[1] ? parts[1].trim() : "";
+   } else {
+     preferredConditions = introduction;
    }
    
-   // personality_keywords 파싱
+   // personality를 personalityKeywords로 변환
    let personalityKeywords: string[] = [];
-   if (application?.personality_keywords) {
-     if (typeof application.personality_keywords === 'string') {
-       personalityKeywords = application.personality_keywords.split(',').map((k: string) => k.trim()).filter(Boolean);
-     } else if (Array.isArray(application.personality_keywords)) {
-       personalityKeywords = application.personality_keywords;
+   if (application?.personality) {
+     personalityKeywords = application.personality.split(',').map((k: string) => k.trim()).filter(Boolean);
+   }
+   
+   // hobbies 배열을 문자열로 변환
+   let hobbiesString = "";
+   if (application?.hobbies) {
+     if (Array.isArray(application.hobbies)) {
+       hobbiesString = application.hobbies.join(", ");
+     } else {
+       hobbiesString = String(application.hobbies);
      }
    }
    
@@ -119,11 +129,11 @@ export const useApplicationForm = () => {
      school: application?.school || "",
      height: application?.height ? String(application.height) : "",
      mbti: application?.mbti || "",
-     smoking: application?.smoking || "",
-     drinking: application?.drinking || "",
+     smoking: application?.lifestyle_smoking || "",
+     drinking: application?.lifestyle_drinking || "",
      religion: application?.religion || "",
      maritalStatus: application?.marital_status || "",
-     hobbies: application?.hobbies || "",
+     hobbies: hobbiesString,
      idealAgeMin: application?.ideal_age_min ? String(application.ideal_age_min) : "",
      idealAgeMax: application?.ideal_age_max ? String(application.ideal_age_max) : "",
      personalityKeywords: personalityKeywords,
@@ -132,7 +142,7 @@ export const useApplicationForm = () => {
      avoidConditions: avoidConditions,
      allowedMaritalStatus: application?.allowed_marital_status || "",
      appearanceConditions: application?.appearance_conditions || "",
-     occupationConditions: application?.occupation_conditions || "",
+     occupationConditions: application?.ideal_occupation || "",
      idealMbti: application?.ideal_mbti || ""
    };
    
