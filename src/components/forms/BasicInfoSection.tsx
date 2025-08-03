@@ -39,7 +39,7 @@ const BasicInfoSection = ({ formData, onInputChange }: BasicInfoSectionProps) =>
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
             성별 *
           </label>
-          <Select onValueChange={(value) => onInputChange("gender", value)} required>
+          <Select value={formData.gender} onValueChange={(value) => onInputChange("gender", value)} required>
             <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
               <SelectValue placeholder="성별을 선택하세요" />
             </SelectTrigger>

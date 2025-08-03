@@ -87,7 +87,7 @@ const IdealTypeSection = ({ formData, onInputChange, onPersonalityKeywordChange 
         <label className="block text-sm font-medium text-bluegray-700 mb-2">
           희망 종교
         </label>
-        <Select onValueChange={(value) => onInputChange("idealReligion", value)}>
+        <Select value={formData.idealReligion} onValueChange={(value) => onInputChange("idealReligion", value)}>
           <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
             <SelectValue placeholder="희망 종교를 선택하세요" />
           </SelectTrigger>
@@ -131,7 +131,7 @@ const IdealTypeSection = ({ formData, onInputChange, onPersonalityKeywordChange 
         <label className="block text-sm font-medium text-bluegray-700 mb-2">
           결혼 경험 허용 범위
         </label>
-        <Select onValueChange={(value) => onInputChange("allowedMaritalStatus", value)}>
+        <Select value={formData.allowedMaritalStatus} onValueChange={(value) => onInputChange("allowedMaritalStatus", value)}>
           <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
             <SelectValue placeholder="허용 가능한 결혼 경험을 선택하세요" />
           </SelectTrigger>

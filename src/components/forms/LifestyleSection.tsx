@@ -25,7 +25,7 @@ const LifestyleSection = ({ formData, onInputChange }: LifestyleSectionProps) =>
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
             흡연 여부 *
           </label>
-          <Select onValueChange={(value) => onInputChange("smoking", value)} required>
+          <Select value={formData.smoking} onValueChange={(value) => onInputChange("smoking", value)} required>
             <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
               <SelectValue placeholder="흡연 여부를 선택하세요" />
             </SelectTrigger>
@@ -42,7 +42,7 @@ const LifestyleSection = ({ formData, onInputChange }: LifestyleSectionProps) =>
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
             음주 여부 *
           </label>
-          <Select onValueChange={(value) => onInputChange("drinking", value)} required>
+          <Select value={formData.drinking} onValueChange={(value) => onInputChange("drinking", value)} required>
             <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
               <SelectValue placeholder="음주 여부를 선택하세요" />
             </SelectTrigger>
@@ -60,7 +60,7 @@ const LifestyleSection = ({ formData, onInputChange }: LifestyleSectionProps) =>
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
             종교
           </label>
-          <Select onValueChange={(value) => onInputChange("religion", value)}>
+          <Select value={formData.religion} onValueChange={(value) => onInputChange("religion", value)}>
             <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
               <SelectValue placeholder="종교를 선택하세요" />
             </SelectTrigger>
@@ -77,7 +77,7 @@ const LifestyleSection = ({ formData, onInputChange }: LifestyleSectionProps) =>
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
             결혼 경험 *
           </label>
-          <Select onValueChange={(value) => onInputChange("maritalStatus", value)} required>
+          <Select value={formData.maritalStatus} onValueChange={(value) => onInputChange("maritalStatus", value)} required>
             <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
               <SelectValue placeholder="결혼 경험을 선택하세요" />
             </SelectTrigger>

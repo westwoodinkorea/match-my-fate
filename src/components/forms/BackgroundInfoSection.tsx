@@ -53,7 +53,7 @@ const BackgroundInfoSection = ({ formData, onInputChange }: BackgroundInfoSectio
           <label className="block text-sm font-medium text-bluegray-700 mb-2">
             최종 학력 *
           </label>
-          <Select onValueChange={(value) => onInputChange("education", value)} required>
+          <Select value={formData.education} onValueChange={(value) => onInputChange("education", value)} required>
             <SelectTrigger className="border-rosegold-200 focus:border-rosegold-400">
               <SelectValue placeholder="학력을 선택하세요" />
             </SelectTrigger>
