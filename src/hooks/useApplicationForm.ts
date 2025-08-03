@@ -121,29 +121,29 @@ export const useApplicationForm = () => {
      gender: application?.gender || "",
      birthDate: birthDate,
      residence: application?.location || "",
-     hometown: application?.hometown || "",
-     contact: application?.contact || "",
+     hometown: "", // 데이터베이스에 없는 필드
+     contact: "", // 데이터베이스에 없는 필드  
      occupation: application?.occupation || "",
-     company: application?.company || "",
+     company: "", // 데이터베이스에 없는 필드
      education: application?.education || "",
-     school: application?.school || "",
-     height: application?.height ? String(application.height) : "",
-     mbti: application?.mbti || "",
+     school: "", // 데이터베이스에 없는 필드
+     height: "", // 데이터베이스에 없는 필드
+     mbti: "", // 데이터베이스에 없는 필드
      smoking: application?.lifestyle_smoking || "",
      drinking: application?.lifestyle_drinking || "",
      religion: application?.religion || "",
-     maritalStatus: application?.marital_status || "",
+     maritalStatus: "", // 데이터베이스에 없는 필드
      hobbies: hobbiesString,
      idealAgeMin: application?.ideal_age_min ? String(application.ideal_age_min) : "",
      idealAgeMax: application?.ideal_age_max ? String(application.ideal_age_max) : "",
      personalityKeywords: personalityKeywords,
-     idealReligion: application?.ideal_religion || "",
+     idealReligion: "", // 데이터베이스에 없는 필드
      preferredConditions: preferredConditions,
      avoidConditions: avoidConditions,
-     allowedMaritalStatus: application?.allowed_marital_status || "",
-     appearanceConditions: application?.appearance_conditions || "",
+     allowedMaritalStatus: "", // 데이터베이스에 없는 필드
+     appearanceConditions: "", // 데이터베이스에 없는 필드
      occupationConditions: application?.ideal_occupation || "",
-     idealMbti: application?.ideal_mbti || ""
+     idealMbti: "" // 데이터베이스에 없는 필드
    };
    
    console.log('New form data:', newFormData);
