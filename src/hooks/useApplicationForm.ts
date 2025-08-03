@@ -77,19 +77,68 @@ export const useApplicationForm = () => {
   };
 
  const setFormDataFromApplication = (application: any, userEmail: string) => {
-  // 무한루프 방지를 위해 매우 간단하게만 설정
-  console.log('Setting form data from application:', application);
-  
-  const newFormData = {
-    ...initialFormData,  // 초기값 사용
-    name: application?.name || "",
-    gender: application?.gender || "", 
-    residence: application?.location || ""
-  };
-  
-  console.log('New form data:', newFormData);
-  setFormData(newFormData);
-};
+   console.log('Setting form data from application:', application);
+   
+   // 생년월일 파싱
+   let birthDate: Date | undefined;
+   if (application?.birth_date) {
+     birthDate = new Date(application.birth_date);
+   }
+   
+   // introduction 텍스트에서 각 필드 파싱
+   const introduction = application?.introduction || "";
+   let preferredConditions = "";
+   let avoidConditions = "";
+   
+   if (introduction.includes("선호하는 조건:")) {
+     const parts = introduction.split("피하고 싶은 조건:");
+     preferredConditions = parts[0].replace("선호하는 조건:", "").trim();
+     avoidConditions = parts[1] || "";
+   }
+   
+   // personality_keywords 파싱
+   let personalityKeywords: string[] = [];
+   if (application?.personality_keywords) {
+     if (typeof application.personality_keywords === 'string') {
+       personalityKeywords = application.personality_keywords.split(',').map((k: string) => k.trim()).filter(Boolean);
+     } else if (Array.isArray(application.personality_keywords)) {
+       personalityKeywords = application.personality_keywords;
+     }
+   }
+   
+   const newFormData: ApplicationFormData = {
+     name: application?.name || "",
+     gender: application?.gender || "",
+     birthDate: birthDate,
+     residence: application?.location || "",
+     hometown: application?.hometown || "",
+     contact: application?.contact || "",
+     occupation: application?.occupation || "",
+     company: application?.company || "",
+     education: application?.education || "",
+     school: application?.school || "",
+     height: application?.height ? String(application.height) : "",
+     mbti: application?.mbti || "",
+     smoking: application?.smoking || "",
+     drinking: application?.drinking || "",
+     religion: application?.religion || "",
+     maritalStatus: application?.marital_status || "",
+     hobbies: application?.hobbies || "",
+     idealAgeMin: application?.ideal_age_min ? String(application.ideal_age_min) : "",
+     idealAgeMax: application?.ideal_age_max ? String(application.ideal_age_max) : "",
+     personalityKeywords: personalityKeywords,
+     idealReligion: application?.ideal_religion || "",
+     preferredConditions: preferredConditions,
+     avoidConditions: avoidConditions,
+     allowedMaritalStatus: application?.allowed_marital_status || "",
+     appearanceConditions: application?.appearance_conditions || "",
+     occupationConditions: application?.occupation_conditions || "",
+     idealMbti: application?.ideal_mbti || ""
+   };
+   
+   console.log('New form data:', newFormData);
+   setFormData(newFormData);
+ };
 
   return {
     formData,
