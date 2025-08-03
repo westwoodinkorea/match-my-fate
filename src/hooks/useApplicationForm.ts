@@ -1,27 +1,23 @@
 import { useState } from "react";
 
 export interface ApplicationFormData {
-  // 기본 정보
   name: string;
   gender: string;
   birthDate: Date | undefined;
   residence: string;
   hometown: string;
   contact: string;
-  // 배경 정보
   occupation: string;
   company: string;
   education: string;
   school: string;
   height: string;
   mbti: string;
-  // 생활 습관 및 가치관
   smoking: string;
   drinking: string;
   religion: string;
   maritalStatus: string;
   hobbies: string;
-  // 이상형 조건
   idealAgeMin: string;
   idealAgeMax: string;
   personalityKeywords: string[];
@@ -35,27 +31,23 @@ export interface ApplicationFormData {
 }
 
 const initialFormData: ApplicationFormData = {
-  // 기본 정보
   name: "",
   gender: "",
   birthDate: undefined,
   residence: "",
   hometown: "",
   contact: "",
-  // 배경 정보
   occupation: "",
   company: "",
   education: "",
   school: "",
   height: "",
   mbti: "",
-  // 생활 습관 및 가치관
   smoking: "",
   drinking: "",
   religion: "",
   maritalStatus: "",
   hobbies: "",
-  // 이상형 조건
   idealAgeMin: "",
   idealAgeMax: "",
   personalityKeywords: [],
@@ -85,66 +77,13 @@ export const useApplicationForm = () => {
   };
 
   const setFormDataFromApplication = (application: any, userEmail: string) => {
-    console.log('Setting form data from application:', application);
-    console.log('Current user email:', userEmail);
-    
-    // introduction에서 preferredConditions와 avoidConditions 분리
-    const introduction = application.introduction || "";
-    const [preferredPart, avoidPart] = introduction.split("\n\n피하고 싶은 조건: ");
-    
-    // age에서 birthDate 계산
-    const currentYear = new Date().getFullYear();
-    const birthYear = application.age ? currentYear - application.age : currentYear - 25;
-    const calculatedBirthDate = application.age ? new Date(birthYear, 0, 1) : undefined;
-    
-    // personality에서 personalityKeywords 배열 생성
-    const personalityKeywords = application.personality ? 
-      application.personality.split(", ").filter((item: string) => item.trim()) : [];
-    
-    // hobbies 배열을 문자열로 변환
-    const hobbiesString = Array.isArray(application.hobbies) ? 
-      application.hobbies.join(", ") : 
-      (application.hobbies || "");
-    
-    const mappedFormData: ApplicationFormData = {
-      // 기본 정보 - DB 필드와 매핑
+    const simpleFormData = {
+      ...initialFormData,
       name: application.name || "",
       gender: application.gender || "",
-      birthDate: calculatedBirthDate,
-      residence: application.location || "",
-      hometown: application.location || "", // location을 hometown으로도 사용
-      contact: userEmail || "",
-      
-      // 배경 정보
-      occupation: application.occupation || "",
-      company: "", // DB에 없는 필드
-      education: application.education || "",
-      school: "", // DB에 없는 필드
-      height: "", // DB에 없는 필드
-      mbti: "", // DB에 없는 필드
-      
-      // 생활 습관 및 가치관
-      smoking: application.lifestyle_smoking || "",
-      drinking: application.lifestyle_drinking || "",
-      religion: application.religion || "",
-      maritalStatus: "", // DB에 없는 필드
-      hobbies: hobbiesString,
-      
-      // 이상형 조건
-      idealAgeMin: application.ideal_age_min?.toString() || "",
-      idealAgeMax: application.ideal_age_max?.toString() || "",
-      personalityKeywords: personalityKeywords,
-      idealReligion: application.religion || "", // religion을 idealReligion으로도 사용
-      preferredConditions: preferredPart || "",
-      avoidConditions: avoidPart || "",
-      allowedMaritalStatus: "", // DB에 없는 필드
-      appearanceConditions: "", // DB에 없는 필드
-      occupationConditions: application.ideal_occupation || "",
-      idealMbti: "" // DB에 없는 필드
+      residence: application.location || ""
     };
-    
-    console.log('Mapped form data:', mappedFormData);
-    setFormData(mappedFormData);
+    setFormData(simpleFormData);
   };
 
   return {
