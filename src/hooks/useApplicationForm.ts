@@ -76,15 +76,20 @@ export const useApplicationForm = () => {
     }));
   };
 
-  const setFormDataFromApplication = (application: any, userEmail: string) => {
-    const simpleFormData = {
-      ...initialFormData,
-      name: application.name || "",
-      gender: application.gender || "",
-      residence: application.location || ""
-    };
-    setFormData(simpleFormData);
+ const setFormDataFromApplication = (application: any, userEmail: string) => {
+  // 무한루프 방지를 위해 매우 간단하게만 설정
+  console.log('Setting form data from application:', application);
+  
+  const newFormData = {
+    ...initialFormData,  // 초기값 사용
+    name: application?.name || "",
+    gender: application?.gender || "", 
+    residence: application?.location || ""
   };
+  
+  console.log('New form data:', newFormData);
+  setFormData(newFormData);
+};
 
   return {
     formData,
