@@ -31,14 +31,14 @@ const Application = ({ user, session }: ApplicationProps) => {
     setShowExistingApplicationDialog
   } = useApplicationState(user);
 
-  // 기존 신청서 데이터로 폼 설정
+  // 기존 신청서 데이터로 폼 설정 (편집 모드일 때만)
   useEffect(() => {
     console.log('Application useEffect triggered');
     console.log('existingApplication:', existingApplication);
     console.log('user:', user);
     console.log('isEditMode:', isEditMode);
     
-    if (existingApplication && user) {
+    if (existingApplication && user && isEditMode) {
       console.log('Setting form data from existing application');
       setFormDataFromApplication(existingApplication, user.email || "");
     }
